@@ -1,0 +1,35 @@
+class	type/scale	name	text	help	language	question_theme_name
+S		sid		Generic Outcome Prioritization Survey				
+S		language		en				
+SL		surveyls_title		"Generic Outcome Prioritization Survey Template"		en		
+SL		surveyls_welcometext		"<p>Welcome to the outcome prioritization survey. Please rate the importance of each item below from the perspective of key stakeholders.</p>"		en		
+SL		surveyls_description		"<p>Use the 1 to 9 scale: 1–3 = Limited Importance, 4–6 = Important, 7–9 = Critical.</p>"		en		
+G	0	"Category 1: Low / Moderate Impact Outcomes"				en		
+Q	F	cat1_array	"Please rate the importance of the following outcomes on a scale from 1 to 9:"	"<p>1-3: Limited Importance | 4-6: Important | 7-9: Critical</p>"	en	arrays/array
+SQ		SQ001	"[OUTCOME / ITEM 1]"		en		
+SQ		SQ002	"[OUTCOME / ITEM 2]"		en		
+SQ		SQ003	"[OUTCOME / ITEM 3]"		en		
+SQ		SQ004	"[OUTCOME / ITEM 4]"		en		
+A	0	A1	"1 (Not important)"		en		
+A	0	A2	"2"		en		
+A	0	A3	"3"		en		
+A	0	A4	"4"		en		
+A	0	A5	"5"		en		
+A	0	A6	"6"		en		
+A	0	A7	"7"		en		
+A	0	A8	"8"		en		
+A	0	A9	"9 (Critical)"		en		
+G	1	"Category 2: High / Critical Impact Outcomes"				en		
+Q	F	cat2_array	"Please rate the importance of the following severe outcomes on a scale from 1 to 9:"	"<p>1-3: Limited Importance | 4-6: Important | 7-9: Critical</p>"	en	arrays/array
+SQ		SQ001	"[CRITICAL OUTCOME 1]"		en		
+SQ		SQ002	"[CRITICAL OUTCOME 2]"		en		
+SQ		SQ003	"[CRITICAL OUTCOME 3]"		en		
+A	0	A1	"1 (Not important)"		en		
+A	0	A2	"2"		en		
+A	0	A3	"3"		en		
+A	0	A4	"4"		en		
+A	0	A5	"5"		en		
+A	0	A6	"6"		en		
+A	0	A7	"7"		en		
+A	0	A8	"8"		en		
+A	0	A9	"9 (Critical)"		en

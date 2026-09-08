@@ -1,0 +1,137 @@
+---
+title: "Outcome Prioritization Analysis"
+format:
+  html:
+    toc: true
+    theme: cosmo
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(tidyverse)
+library(gt)
+
+# Load LimeSurvey export CSV
+# Replace filename with your local path if necessary
+df_raw <- read_csv("results.csv")
+
+```
+
+
+
+
+```{r process-data}
+# Tidy survey responses and calculate consensus metrics
+
+# 1. Identify outcome/indicator columns dynamically
+outcome_cols <- names(df_raw)[
+  str_detect(names(df_raw), "^outcome_scores\\[") | 
+  str_detect(names(df_raw), "^Rate the relative importance")
+]
+
+# 2. Reshape and clean responses
+df_long <- df_raw %>%
+  pivot_longer(
+    cols = all_of(outcome_cols),
+    names_to = "indicator_raw",
+    values_to = "score_raw"
+  ) %>%
+  filter(!is.na(score_raw)) %>%
+  mutate(
+    # Extract numeric score whether value is "A6", "6", or numeric 6
+    score = as.numeric(str_extract(as.character(score_raw), "\\d+")),
+    
+    # Map column headers or codes to clean indicator names
+    indicator = case_when(
+      str_detect(indicator_raw, "SQ001|Outcome A") ~ "Primary Health Indicator / Outcome A",
+      str_detect(indicator_raw, "SQ002|Metric B")  ~ "Secondary Health Indicator / Metric B",
+      str_detect(indicator_raw, "SQ003|Metric C")  ~ "Patient-Reported / Experience Metric C",
+      str_detect(indicator_raw, "SQ004|Metric D")  ~ "Resource Utilization / System Metric D",
+      TRUE ~ indicator_raw
+    ),
+    
+    # Categorize into standard GRADE tiers
+    tier = case_when(
+      score >= 7 ~ "Critical (7-9)",
+      score >= 4 ~ "Important (4-6)",
+      score >= 1 ~ "Limited (1-3)"
+    )
+  )
+
+# Summary table per indicator
+summary_tbl <- df_long %>%
+  group_by(indicator) %>%
+  summarise(
+    N = n(),
+    Mean = mean(score, na.rm = TRUE),
+    Median = median(score, na.rm = TRUE),
+    IQR = IQR(score, na.rm = TRUE),
+    Pct_Critical = mean(score >= 7, na.rm = TRUE) * 100,
+    .groups = "drop"
+  ) %>%
+  arrange(desc(Mean))
+```
+
+
+# Summary Metrics Table
+
+```{r summary_table}
+#| echo: false
+summary_tbl %>%
+  gt() %>%
+  tab_header(
+    title = "GRADE Outcome Prioritization Summary",
+    subtitle = "Mean, median, and proportion rated critical (7-9)"
+  ) %>%
+  fmt_number(columns = c(Mean, Median, IQR), decimals = 2) %>%
+  fmt_number(columns = Pct_Critical, decimals = 1, pattern = "{x}%") %>%
+  cols_label(
+    indicator = "Outcome Indicator",
+    Pct_Critical = "% Critical (7-9)"
+  )
+```
+
+## Rating distributions per indicator
+
+
+```{r viz-rating}
+# Rating distributions per indicator
+ggplot(df_long, aes(x = factor(score), fill = indicator)) +
+  geom_bar(show.legend = FALSE) +
+  facet_wrap(~ indicator, ncol = 2) +
+  scale_x_discrete(drop = FALSE, limits = as.character(1:9)) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Distribution of Scores Across 1-9 GRADE Scale",
+    x = "Score (1-3: Limited | 4-6: Important | 7-9: Critical)",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+
+```
+
+## Median rankings across outcomes
+
+```{r viz-ranking}
+# Median rankings across outcomes
+ggplot(df_long, aes(x = reorder(indicator, score, FUN = median), y = score, fill = indicator)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  geom_jitter(width = 0.15, alpha = 0.5) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 7, ymax = 9, alpha = 0.1, fill = "red") +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 4, ymax = 6, alpha = 0.1, fill = "blue") +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1, ymax = 3, alpha = 0.1, fill = "gray") +
+  coord_flip() +
+  scale_y_continuous(breaks = 1:9, limits = c(1, 9)) +
+  labs(
+    title = "Outcome Rankings & Quartiles",
+    x = NULL,
+    y = "Importance Score"
+  ) +
+  theme_minimal()
+```
+

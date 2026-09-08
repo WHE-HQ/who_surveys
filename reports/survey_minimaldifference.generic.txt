@@ -1,0 +1,17 @@
+class	type/scale	name	relevance	text	help	language	question_theme_name
+S		sid		Generic MID Survey				
+S		language		en				
+SL		surveyls_title		"Generic Minimal Important Difference Survey"		en		
+SL		surveyls_welcometext		"<p>Welcome. Please rate the threshold of importance for each outcome.</p>"		en		
+SL		surveyls_description		"<p>Select one threshold per outcome.</p>"		en		
+G	0	G01	1	"Outcome Rating Group"		en		
+Q	F	MID_ARRAY	1	"For each generic outcome, select the required consensus threshold:"		en	arrays/array
+SQ	0	OUTCOME_A	1	"Generic Outcome A"		en		
+SQ	0	OUTCOME_B	1	"Generic Outcome B"		en		
+SQ	0	OUTCOME_C	1	"Generic Outcome C"		en		
+A	0	A1	1	"All / almost all (>90%) - Important"		en		
+A	0	A2	1	"Most (75-90%) - Important"		en		
+A	0	A3	1	"Majority (51-74%) - Important"		en		
+A	0	A4	1	"Majority (51-74%) - Unimportant"		en		
+A	0	A5	1	"Most (75-90%) - Unimportant"		en		
+A	0	A6	1	"All / almost all (>90%) - Unimportant"		en

@@ -1,0 +1,200 @@
+---
+title: "Minimal Important Difference Report"
+format:
+  html:
+    toc: true
+    theme: cosmo
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(tidyverse)
+library(knitr)
+library(scales)
+
+# Defined ordered factors matching LimeSurvey Codes (A1 to A6)
+threshold_labels <- c(
+  "A1" = "All / almost all (>90%) - Important",
+  "A2" = "Most (75-90%) - Important",
+  "A3" = "Majority (51-74%) - Important",
+  "A4" = "Majority (51-74%) - Unimportant",
+  "A5" = "Most (75-90%) - Unimportant",
+  "A6" = "All / almost all (>90%) - Unimportant"
+)
+
+outcome_names <- c(
+  "MID_ARRAY_OUTCOME_A" = "Generic Outcome A",
+  "MID_ARRAY_OUTCOME_B" = "Generic Outcome B",
+  "MID_ARRAY_OUTCOME_C" = "Generic Outcome C"
+)
+
+# Load LimeSurvey Export Data or simulate if file does not exist
+csv_filepath <- "results.csv"
+
+if (file.exists(csv_filepath)) {
+  raw_df <- read_csv(csv_filepath)
+} else {
+  set.seed(42)
+  n <- 100
+  raw_df <- tibble(
+    id = 1:n,
+    MID_ARRAY_OUTCOME_A = sample(names(threshold_labels), n, replace = TRUE, prob = c(0.49, 0.21, 0.17, 0.06, 0.06, 0.01)),
+    MID_ARRAY_OUTCOME_B = sample(names(threshold_labels), n, replace = TRUE, prob = c(0.41, 0.25, 0.16, 0.13, 0.03, 0.02)),
+    MID_ARRAY_OUTCOME_C = sample(names(threshold_labels), n, replace = TRUE, prob = c(0.55, 0.24, 0.08, 0.08, 0.04, 0.01))
+  )
+}
+
+# Define ordered threshold levels matching survey options
+threshold_levels <- c(
+  "All / almost all (>90%) - Important",
+  "Most (75-90%) - Important",
+  "Majority (51-74%) - Important",
+  "Majority (51-74%) - Unimportant",
+  "Most (75-90%) - Unimportant",
+  "All / almost all (>90%) - Unimportant"
+)
+
+# Optional code mapping if exporting answer codes (A1-A6) instead of full text
+code_to_text <- c(
+  "A1" = "All / almost all (>90%) - Important",
+  "A2" = "Most (75-90%) - Important",
+  "A3" = "Majority (51-74%) - Important",
+  "A4" = "Majority (51-74%) - Unimportant",
+  "A5" = "Most (75-90%) - Unimportant",
+  "A6" = "All / almost all (>90%) - Unimportant"
+)
+mycol <- c(
+  "All / almost all (>90%) - Unimportant" = "#d62728", # Dark Red
+  "Most (75-90%) - Unimportant"           = "#ff7f0e", # Orange
+  "Majority (51-74%) - Unimportant"       = "#ffbb78", # Light Orange
+  "Majority (51-74%) - Important"         = "#c5b0d5", # Soft Purple
+  "Most (75-90%) - Important"             = "#aec7e8", # Light Blue
+  "All / almost all (>90%) - Important"   = "#1f77b4"  # Dark Blue
+)
+# Data processing pipeline
+df_processed <- raw_df %>%
+  # Select target columns by text pattern or code prefix
+  select(contains("generic outcome") | starts_with("MID_ARRAY_")) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "Raw_Outcome",
+    values_to = "Response_Value"
+  ) %>%
+  filter(!is.na(Response_Value)) %>%
+  mutate(
+    # Extract outcome label inside brackets [Generic Outcome A] or keep raw header name
+    Outcome = if_else(
+      str_detect(Raw_Outcome, "\\[.*\\]"),
+      str_extract(Raw_Outcome, "(?<=\\[).+?(?=\\])"),
+      Raw_Outcome
+    ),
+    # Map code (A1-A6) if present, otherwise use response string as-is
+    Threshold = recode(Response_Value, !!!code_to_text, .default = Response_Value),
+    Threshold = factor(Threshold, levels = threshold_levels)
+  )
+
+# Compute counts and percentages
+df_summary <- df_processed %>%
+  group_by(Outcome, Threshold) %>%
+  summarise(Count = n(), .groups = "drop_last") %>%
+  mutate(Percentage = round((Count / sum(Count)) * 100, 1)) %>%
+  ungroup()
+
+
+```
+
+## Summary Table of Survey Responses
+
+```{r summary-table}
+library(gt)
+
+df_summary %>%
+  gt(groupname_col = "Outcome") %>%
+  tab_header(
+    title = md("**Summary Table of Survey Responses**"),
+    subtitle = "Distribution of thresholds by clinical outcome"
+  ) %>%
+  cols_label(
+    Threshold = "Response Option / Threshold Level",
+    Count = "Count (n)",
+    Percentage = "Percentage (%)"
+  ) %>%
+  fmt_number(
+    columns = Percentage,
+    decimals = 1,
+    pattern = "{x}%"
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = Threshold
+  ) %>%
+  cols_align(
+    align = "right",
+    columns = c(Count, Percentage)
+  ) %>%
+  tab_options(
+    table.width = pct(100),
+    heading.title.font.size = px(16),
+    column_labels.font.weight = "bold",
+    row_group.font.weight = "bold",
+    row_group.background.color = "#f7f9fa",
+    table.border.top.color = "black",
+    table.border.bottom.color = "black"
+  )
+```
+
+## Distribution of Threshold Preferences
+
+```{r stacked-bar-chart, fig.width=10, fig.height=5.5}
+mycol <- c(
+  "All / almost all (>90%) - Unimportant" = "#d62728", # Dark Red
+  "Most (75-90%) - Unimportant"           = "#ff7f0e", # Orange
+  "Majority (51-74%) - Unimportant"       = "#ffbb78", # Light Orange
+  "Majority (51-74%) - Important"         = "#c5b0d5", # Soft Purple
+  "Most (75-90%) - Important"             = "#aec7e8", # Light Blue
+  "All / almost all (>90%) - Important"   = "#1f77b4"  # Dark Blue
+)
+
+# Re-order levels in reverse so legend/stack order builds intuitively
+ordered_thresholds <- rev(levels(df_summary$Threshold))
+
+df_summary %>%
+  filter(Count > 0) %>%
+  mutate(Threshold = factor(Threshold, levels = ordered_thresholds)) %>%
+  ggplot(aes(x = Outcome, y = Count, fill = Threshold)) +
+  geom_col(color = "black", width = 0.6) +
+  geom_text(
+    aes(label = paste0(Count, "\n(", sprintf("%.1f%%", Percentage), ")")),
+    position = position_stack(vjust = 0.5),
+    fontface = "bold",
+    size = 3.5
+  ) +
+  scale_fill_manual(values = mycol) +
+  coord_flip() +
+  labs(
+    y = "Number of Respondents",
+    x = NULL,
+    title = "Minimal Important Difference Threshold Preferences",
+    caption = "Source: WHO"
+  ) +
+theme_bw() +
+theme(
+  text = element_text(family = "sans", face = "plain", colour = "black"),
+  legend.position = "bottom",
+  legend.title = element_blank(),
+  panel.border = element_blank(),
+  panel.grid.major.y = element_blank(),
+  axis.text.x = element_text(size = 12, vjust = 0.3, margin = margin(5, 0, 0, 0)),
+  axis.text.y = element_text(size = 12, face = "bold"),
+  legend.text = element_text(size = rel(0.9)),
+  plot.background = element_rect(colour = NA, fill = "white"),
+  strip.background = element_rect(colour = "white", fill = "white"),
+  plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+  axis.title.x = element_text(size = 12, colour = "black", hjust = 0.5)
+) +
+guides(fill = guide_legend(nrow = 6, byrow = TRUE))
+```
