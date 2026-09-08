@@ -14,7 +14,7 @@ This repository contains the WHO survey templates (LimeSurvey `.lss` / `.txt` st
 | ├── `survey_mindiff.txt` | Template for assessing minimal differences. |
 | └── `survey_outcomeprior.txt` | Template for assessing outcome prioritization. |
 | `reports/` | **Quarto (`.qmd`) Analysis Scripts** for automated reporting. |
-| ├── `survey_mindiff.qmd` | Automated report generation for generic outcome responses. |
+| ├── `report_mindiff.qmd` | Automated report generation for generic outcome responses. |
 | └── `report_outcomeprior.qmd` | Automated report generation for outcome prioritization. |
 | `CHANGELOG.md` | Version history and updates to templates and scripts[cite: 5]. |
 
@@ -27,7 +27,7 @@ This repository contains the WHO survey templates (LimeSurvey `.lss` / `.txt` st
 1. Log in to **[WHO DataForm V6 Extranet](https://extranet.who.int/dataformv6/index.php/surveyAdministration/listsurveys)**.
 2. Click the orange **`+`** (Create) button in the top navigation bar.
 3. Select **`Import survey`** from the dropdown menu.
-4. Click **Browse** and upload the desired `.lss` template from the `templates/` folder (`survey_generic_outcomes.lss` or `survey_specific_outcomes.lss`).
+4. Click **Browse** and upload the desired `.lss` template from the `templates/` folder (`survey_mindiff.txt` or `survey_outcomeprior.txt`).
 5. Set your survey title, base language, and click **Import survey**.
 6. Review question logic and **Activate** the survey when ready to collect responses.
 
@@ -59,14 +59,14 @@ install.packages(c("tidyverse", "knitr", "scales", "showtext", "quarto"))
 ### Option A
 
 
-1. Open **report_generic_outcomes.qmd** or **report_specific_outcomes.qmd**.
+1. Open **report_mindiff.qmd** or **report_outcomeprior.qmd**.
 2. Ensure your exported CSV file name matches the file path defined in the setup chunk (**csv_file <- "your_exported_data.csv"**).
 3. Click Render (or press Ctrl+Shift+K / Cmd+Shift+K).
 
 ### Option B
 
 ```bash
-quarto render reports/report_generic_outcomes.qmd --to html
+quarto render reports/report_outcomeprior.qmd --to html
 ```
 
 
