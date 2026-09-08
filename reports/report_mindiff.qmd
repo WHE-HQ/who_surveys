@@ -16,7 +16,7 @@ library(tidyverse)
 library(knitr)
 library(scales)
 
-# Defined ordered factors matching LimeSurvey Codes (A1 to A6)
+# Defined ordered factors matching Survey Codes (A1 to A6)
 threshold_labels <- c(
   "A1" = "All / almost all (>90%) - Important",
   "A2" = "Most (75-90%) - Important",
@@ -32,7 +32,7 @@ outcome_names <- c(
   "MID_ARRAY_OUTCOME_C" = "Generic Outcome C"
 )
 
-# Load LimeSurvey Export Data or simulate if file does not exist
+# Load Survey Export Data : change path/file name accordingly
 csv_filepath <- "results.csv"
 
 if (file.exists(csv_filepath)) {

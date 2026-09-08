@@ -15,7 +15,7 @@ execute:
 library(tidyverse)
 library(gt)
 
-# Load LimeSurvey export CSV
+# Load Survey export CSV
 # Replace filename with your local path if necessary
 df_raw <- read_csv("results.csv")
 

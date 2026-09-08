@@ -1,6 +1,6 @@
 # WHO Consensus & Threshold Survey Pipelines
 
-This repository contains the WHO survey templates (LimeSurvey `.lss` / `.txt` structure) for assessing **Minimal Important Difference (MID)** and **Consensus Thresholds**, alongside automated Quarto (`.qmd`) reporting scripts to analyze survey responses[cite: 5, 7].
+This repository contains the WHO survey templates (LimeSurvey `.lss` / `.txt` structure) for assessing **Minimal Important Difference (MID)** and **Outcome Prioritization**, alongside automated Quarto (`.qmd`) reporting scripts to analyze survey responses[cite: 5, 7].
 
 > ⚠️ **Data Privacy Notice:** This repository contains survey definitions, templates, and reporting pipelines only. It contains **no individual participant data**, credentials, or API tokens.
 
@@ -11,11 +11,11 @@ This repository contains the WHO survey templates (LimeSurvey `.lss` / `.txt` st
 | Directory / File | Description |
 | :--- | :--- |
 | `templates/` | **LimeSurvey XML/LSS Templates** for generic and targeted outcome assessments. |
-| ├── `survey_generic_outcomes.lss` | Template for generic outcome threshold surveys. |
-| └── `survey_specific_outcomes.lss` | Template for specific outcome threshold surveys. |
+| ├── `survey_mindiff.txt` | Template for assessing minimal differences. |
+| └── `survey_outcomeprior.txt` | Template for assessing outcome prioritization. |
 | `reports/` | **Quarto (`.qmd`) Analysis Scripts** for automated reporting. |
-| ├── `report_generic_outcomes.qmd` | Automated report generation for generic outcome responses. |
-| └── `report_specific_outcomes.qmd` | Automated report generation for specific outcome responses. |
+| ├── `survey_mindiff.qmd` | Automated report generation for generic outcome responses. |
+| └── `report_outcomeprior.qmd` | Automated report generation for outcome prioritization. |
 | `CHANGELOG.md` | Version history and updates to templates and scripts[cite: 5]. |
 
 ---
