@@ -1,4 +1,4 @@
-# WHO Consensus & Threshold Survey Pipelines
+# Tools to support Guideline Development Groups to reach consensus on minimal important difference thresholds and priority outcomes
 
 This repository contains the WHO survey templates (LimeSurvey `.lss` / `.txt` structure) for assessing **Minimal Important Difference (MID)** and **Outcome Prioritization**, alongside automated Quarto (`.qmd`) reporting scripts to analyze survey responses[cite: 5, 7].
 
@@ -22,7 +22,7 @@ This repository contains the WHO survey templates (LimeSurvey `.lss` / `.txt` st
 
 ## 🚀 Workflow Guide
 
-### Step 1: Import Survey Templates into WHO DataForm (LimeSurvey)
+### Step 1: Import Survey Templates into DataForm (LimeSurvey)
 
 1. Log in to **[WHO DataForm V6 Extranet](https://extranet.who.int/dataformv6/index.php/surveyAdministration/listsurveys)**.
 2. Click the orange **`+`** (Create) button in the top navigation bar.
@@ -72,18 +72,9 @@ quarto render reports/report_outcomeprior.qmd --to html
 
 ## Contributing / updating
 
-Work on a branch and open a Pull Request; do not commit directly to `main`. Never commit patient data, credentials, API tokens or record exports.
+Work on a branch and open a Pull Request; do not commit directly to `main`. 
 
-## Data governance
-
-These instruments are shared to support **medical oxygen ecosystem self-assessment at a national level** and to keep track of progress in the implementation of **WHA resolution 76.3: Increasing access to medical oxygen**. Any data collected with them remains the property of the collecting institution / national programme and is subject to local confidentiality and data-protection rules. Deployment, access control and analysis of collected data are the responsibility of the deploying facility and national programme.
-
-## References
-
-[LINK TO WHO PUBLICATION (DOI)]
-
-https://apps.who.int/gb/ebwha/pdf_files/WHA76/A76_R3-en.pdf
 
 ## Maintainer
 
-WHO data team. For access requests or questions, contact the maintainer team (details provided separately, not stored in this repository).
+For access requests or questions, contact cmtm@who.int
